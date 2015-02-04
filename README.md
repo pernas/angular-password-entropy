@@ -6,7 +6,7 @@ AngularJS directive to check the entropy of a password
 - Include the module dependency:
 
 ```javascript
-    angular.module('myApp', [passwordStr'])
+    angular.module('myApp', ['passwordStr'])
 ```
 
 - As an element
