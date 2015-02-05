@@ -13,12 +13,13 @@ angular.module('passwordStr', []).
                               aria-valuemin="0" \
                               aria-valuemax="100" \
                               style="width: {{entropy(password)}}%;"> \
-                                       {{veredict(password)}} \
+                                       {{veredict(H)}} \
                          </div>\
                         </div>',
             controller: ['$scope',
               function($scope){
                 $scope.colorBar = "progress-bar-danger";
+                $scope.H = 0;
 
                 var hasLowerCase = function (str){
                     return (/[a-z]/.test(str));
@@ -47,13 +48,12 @@ angular.module('passwordStr', []).
                   if (hasPunctuation(pass)) {
                     base += 30;
                   }
-                  var H = Math.log2(Math.pow(base, pass.length));
-                  if (H > 100) {H = 100};
-                  return H;         
+                  $scope.H = Math.log2(Math.pow(base, pass.length));
+                  if ($scope.H > 100) {$scope.H = 100};
+                  return $scope.H;         
                 };
 
-                $scope.veredict = function(pass) {
-                    var H = $scope.entropy(pass);
+                $scope.veredict = function(H) {
                     var message = "Weak";
                     switch (true) {
                         case (H <= 20):
