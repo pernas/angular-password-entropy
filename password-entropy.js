@@ -48,9 +48,9 @@ angular.module('passwordEntropy', [])
       return{
         require:'ngModel',
         link: function(scope, elem, attrs, ctrl){
-          ctrl.$parsers.unshift(checkForEven);
+          ctrl.$parsers.unshift(checkEntropy);
 
-          function checkForEven(viewValue){
+          function checkEntropy(viewValue){
             var minimumEntropy = parseFloat(attrs.minEntropy);
             var H = EntropyService.entropy(viewValue);
             if (H > minimumEntropy) {
