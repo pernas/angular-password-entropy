@@ -1,5 +1,5 @@
-# password-checker
-AngularJS directive to check the entropy of a password
+# password-entropy
+AngularJS directive to create an entropy bar meter for a password field
 
 ## Usage
 
