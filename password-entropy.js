@@ -19,14 +19,21 @@ angular.module('passwordEntropy', [])
               function($scope){
 
                 $scope.colorBar = "progress-bar-danger";
+                var defaultOpt = {
+                    '0':  ['progress-bar-danger', 'weak'],
+                    '25': ['progress-bar-warning', 'regular'],
+                    '50': ['progress-bar-info', 'normal'],
+                    '75': ['progress-bar-success', 'strong']
+                  };
+                $scope.optionsUsed = $scope.options || defaultOpt;
                 $scope.veredict = function(pass){
                     var H = EntropyService.entropy(pass);
                     var message = "";
-                    for(var key in $scope.options) {
-                      if($scope.options.hasOwnProperty(key)) {
+                    for(var key in $scope.optionsUsed) {
+                      if($scope.optionsUsed.hasOwnProperty(key)) {
                         if (H > key) {
-                          $scope.colorBar = $scope.options[key][0];
-                          message = $scope.options[key][1];
+                          $scope.colorBar = $scope.optionsUsed[key][0];
+                          message = $scope.optionsUsed[key][1];
                         }
                       }
                     }
