@@ -7,6 +7,12 @@ AngularJS directive to create an entropy bar meter for a password field
 bower install pernas/angular-password-entropy
 ```
 
+## Update
+
+```
+bower update angular-password-entropy
+```
+
 ## Usage
 
 - Include the module dependency:
@@ -15,9 +21,10 @@ bower install pernas/angular-password-entropy
     angular.module('myApp', ['passwordEntropy'])
 ```
 
-- The element `<password-entropy>` is showing the entropy bar.
-- The minimum entropy validation is set on the input as `min-entropy="50"`.
-- You have to define your set of options for the entropy bar.
+- The element `<password-entropy>` prints the entropy bar.
+- The bar options (color, steps) can be defined or ignored and use the default settings. The password entropy must be in the range [0..100].
+- The minimum entropy validation can be set as `min-entropy="50"`.
+
 
 ```html
 <form role="form" name="testform" ng-submit="controller.mysubmit()">
@@ -44,7 +51,6 @@ bower install pernas/angular-password-entropy
     </div>
 </form>
 ```
-- The options set must contain scores between 1-100 and can have as much steps as you need
 
 ```javascript
     .controller('controller', [
