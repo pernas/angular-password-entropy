@@ -1,6 +1,12 @@
 # angular-password-entropy
 AngularJS directive to create an entropy bar meter for a password field
 
+## Install
+
+```
+bower install pernas/angular-password-entropy
+```
+
 ## Usage
 
 - Include the module dependency:
