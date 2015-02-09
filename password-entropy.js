@@ -71,8 +71,6 @@ angular.module('passwordEntropy', [])
         }
       };
 }])
-////////////////////////////////////////////////////////////////////////////////
-// Entropy Service 
   .factory('EntropyService', function () {
     var hasLowerCase = function (str){
         return (/[a-z]/.test(str));
@@ -86,8 +84,36 @@ angular.module('passwordEntropy', [])
     var hasPunctuation = function (str){
         return (/[-!$%^&*()_+|~=`{}\[\]:";'<>?,.\/]/.test(str));
     };
+    var badPatterns = function (pass, H) {
+      
+      var patterns = [ /^\d+$/                  // all digits
+                     , /^[a-z]+\d$/             // all lower 1 digit
+                     , /^[A-Z]+\d$/             // all upper 1 digit
+                     , /^[a-zA-Z]+\d$/          // all letters 1 digit
+                     , /^[a-z]+\d+$/            // all lower then digits
+                     , /^[a-z]+$/               // all lower
+                     , /^[A-Z]+$/               // all upper
+                     , /^[A-Z][a-z]+$/          // 1 upper all lower
+                     , /^[A-Z][a-z]+\d$/        // 1 upper, lower, 1 digit
+                     , /^[A-Z][a-z]+\d+$/       // 1 upper, lower, digits
+                     , /^[a-z]+[._!\- @*#]$/    // all lower 1 special
+                     , /^[A-Z]+[._!\- @*#]$/    // all upper 1 special
+                     , /^[a-zA-Z]+[._!\- @*#]$/ // all letters 1 special
+                     , /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]+$/  //email
+                     , /^[a-z\-ZA-Z0-9.-]+$/    // web address
+                     ];
+      var entropy = H;
+      angular.forEach(patterns, function(pattern) {
+        if (pattern.test(pass)) {
+          entropy = entropy / 2;
+        }
+      });
+      return entropy;
+    };
+
     return {
         entropy: function(pass) {
+
                 var H = 0;
                 if(pass) {
                   var base = 0;
@@ -107,6 +133,8 @@ angular.module('passwordEntropy', [])
                   var H = Math.log2(Math.pow(base, pass.length));
                   //fit to max entropy
                   if (H > 100) {H = 100};
+                  //lower ratio for bad patterns
+                  H = badPatterns(pass,H);
                 }
                 return H;         
         }
