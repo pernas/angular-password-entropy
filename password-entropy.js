@@ -11,14 +11,16 @@ angular.module('passwordEntropy', [])
                               role="progressbar" \
                               aria-valuemin="0" \
                               aria-valuemax="100" \
-                              style="width: {{entropy(password)}}%;"> \
-                           {{veredict(password)}} \
+                              style="width: {{H}}%;"> \
+                           {{veredict(H)}} \
                          </div>\
                         </div>',
             controller: ['$scope',
               function($scope){
 
+                $scope.H = 0;
                 $scope.colorBar = "progress-bar-danger";
+
                 var defaultOpt = {
                     '0':  ['progress-bar-danger', 'weak'],
                     '25': ['progress-bar-warning', 'regular'],
@@ -26,8 +28,7 @@ angular.module('passwordEntropy', [])
                     '75': ['progress-bar-success', 'strong']
                   };
                 $scope.optionsUsed = $scope.options || defaultOpt;
-                $scope.veredict = function(pass){
-                    var H = EntropyService.entropy(pass);
+                $scope.veredict = function(H){
                     var message = "";
                     for(var key in $scope.optionsUsed) {
                       if($scope.optionsUsed.hasOwnProperty(key)) {
@@ -40,6 +41,9 @@ angular.module('passwordEntropy', [])
                     return message;
                 };
                 $scope.entropy = EntropyService.entropy;
+                $scope.$watch('password', function(newValue, oldValue) {
+                  $scope.H = $scope.entropy(newValue);
+                });
               }
             ],
             scope: {
@@ -71,7 +75,11 @@ angular.module('passwordEntropy', [])
         }
       };
 }])
+////////////////////////////////////////////////////////////////////////////////
+// Entropy Service
   .factory('EntropyService', function () {
+    var H = 0;
+    var password = "";
     var hasLowerCase = function (str){
         return (/[a-z]/.test(str));
     };
@@ -114,27 +122,27 @@ angular.module('passwordEntropy', [])
     return {
         entropy: function(pass) {
 
-                var H = 0;
-                if(pass) {
-                  var base = 0;
-                  if (hasLowerCase(pass)) {
-                    base += 26;
+                if (angular.isUndefined(pass)) {H = 0; password = ""}
+                else {
+                  if (pass !== password) {
+                    var base = 0;
+                    password = pass;
+                    if (hasLowerCase(pass)) {
+                      base += 26;
+                    }
+                    if (hasUpperCase(pass)) {
+                      base += 26;
+                    }
+                    if (hasNumbers(pass)) {
+                      base += 10;
+                    }
+                    if (hasPunctuation(pass)) {
+                      base += 30;
+                    }
+                    H = Math.log2(Math.pow(base, pass.length));
+                    H = badPatterns(pass,H);
+                    if (H > 100) {H = 100};
                   }
-                  if (hasUpperCase(pass)) {
-                    base += 26;
-                  }
-                  if (hasNumbers(pass)) {
-                    base += 10;
-                  }
-                  if (hasPunctuation(pass)) {
-                    base += 30;
-                  }
-
-                  var H = Math.log2(Math.pow(base, pass.length));
-                  //fit to max entropy
-                  if (H > 100) {H = 100};
-                  //lower ratio for bad patterns
-                  H = badPatterns(pass,H);
                 }
                 return H;         
         }
