@@ -11,12 +11,14 @@ angular.module('passwordEntropy', [])
         return {
             restrict: 'E',
             template: '<div ng-show="password" class="progress"> \
-                         <div class="progress-bar {{colorBar}}" \
+                         <div class="progress-bar" \
+                              ng-class=colorBar \
                               role="progressbar" \
+                              aria-valuenow="{{H}}"" \
                               aria-valuemin="0" \
                               aria-valuemax="100" \
-                              style="width: {{H}}%;"> \
-                           {{veredict(H)}} \
+                              ng-style="{width: H + \'%\'}" > \
+                           {{veredict(H)}}\
                          </div>\
                         </div>',
             controller: ['$scope',
