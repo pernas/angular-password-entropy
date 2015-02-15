@@ -68,4 +68,3 @@ bower update angular-password-entropy
     }])
 ```
 
-- [See it in action](http://demo.pernas.cat:18555/static/index.html#/) 
