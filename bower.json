@@ -1,6 +1,6 @@
 {
   "name": "angular-password-entropy",
-  "version": "0.0.6",
+  "version": "0.1.0",
   "homepage": "https://github.com/pernas/angular-password-entropy",
   "authors": [
     "Jaume Pernas <jaume@pernas.cat>"
@@ -11,7 +11,8 @@
     "angularjs",
     "password",
     "entropy",
-    "directive"
+    "directive",
+    "coffeescript"
   ],
   "license": "UNLICENSE",
   "ignore": [
@@ -19,7 +20,8 @@
     "node_modules",
     "bower_components",
     "test",
-    "tests"
+    "tests",
+    "src"
   ],
   "dependencies": {
     "angular": ">=1.2.0"
