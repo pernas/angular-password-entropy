@@ -17,55 +17,54 @@ Just = (input)-> if input? then _unit input else Nothing
 
 angular.module('passwordEntropy', [])
   .directive('passwordEntropy', [
-      'EntropyService'
-      (EntropyService) ->
-        {
+    'EntropyService'
+    (EntropyService) ->
+      {
+      restrict: 'E'
+      ############################
+      template: '<div ng-show="password" class="progress"> \
+                   <div class="progress-bar" \
+                        ng-class=colorBar \
+                        role="progressbar" \
+                        aria-valuenow="{{score}}"" \
+                        aria-valuemin="0" \
+                        aria-valuemax="100" \
+                        ng-style="{width: score + \'%\'}" > \
+                     {{veredict(score)}}\
+                   </div>\
+                  </div>'
+      ############################
+      controller: [
+        '$scope'
+        ($scope) ->
+          # state bar varibles
+          $scope.score = 0
+          $scope.colorBar = 'progress-bar-danger'
 
-        restrict: 'E'
-        template: '<div ng-show="password" class="progress"> \
-                     <div class="progress-bar" \
-                          ng-class=colorBar \
-                          role="progressbar" \
-                          aria-valuenow="{{H}}"" \
-                          aria-valuemin="0" \
-                          aria-valuemax="100" \
-                          ng-style="{width: H + \'%\'}" > \
-                       {{veredict(H)}}\
-                     </div>\
-                    </div>\
-                    <span>{{H}}</span>'
-        controller: [
-          '$scope'
-          ($scope) ->
-            $scope.H = 0
-            $scope.colorBar = 'progress-bar-danger'
-            defaultOpt = {
-              '0':  ['progress-bar-danger', 'weak'],
-              '25': ['progress-bar-warning', 'regular'],
-              '50': ['progress-bar-info', 'normal'],
-              '75': ['progress-bar-success', 'strong']
-            }
-            $scope.optionsUsed = $scope.options or defaultOpt
+          # options setup
+          defaultOpt = {
+            '0':  ['progress-bar-danger', 'weak'],
+            '25': ['progress-bar-warning', 'regular'],
+            '50': ['progress-bar-info', 'normal'],
+            '75': ['progress-bar-success', 'strong']
+          }
+          $scope.optionsUsed = $scope.options or defaultOpt
 
-            $scope.veredict = (H) ->
-              message = ''
-              for key of $scope.optionsUsed
-                if $scope.optionsUsed.hasOwnProperty(key)
-                  if H > key
-                    $scope.colorBar = $scope.optionsUsed[key][0]
-                    message = $scope.optionsUsed[key][1]
-              message
+          # score veredict method
+          $scope.veredict = (score) ->
+            opt = opts for own thold, opts of $scope.optionsUsed when thold <= score
+            $scope.colorBar = opt[0]
+            message = opt[1]
 
-            $scope.entropy = EntropyService.scorePassword
-            $scope.$watch('password', 
-                          (newValue, oldValue) ->
-                            $scope.H = $scope.entropy newValue
-            )
-          ]
-        scope:
-            password: '='
-            options: '='
-        
+          # Watcher: when password change => recalculate score/entropy
+          $scope.entropy = EntropyService.scorePassword
+          $scope.$watch('password', (nV, oV) -> $scope.score = $scope.entropy nV)
+      ]
+      ############################
+      scope:
+          password: '='
+          options: '='
+      
     }])
   ##############################################################################
   # validation rule
@@ -79,8 +78,8 @@ angular.module('passwordEntropy', [])
   
           checkEntropy = (viewValue) ->
             minimumEntropy = parseFloat(attrs.minEntropy)
-            H = EntropyService.scorePassword(viewValue)
-            if H > minimumEntropy
+            score = EntropyService.scorePassword(viewValue)
+            if score > minimumEntropy
               ctrl.$setValidity 'minEntropy', true
             else
               ctrl.$setValidity 'minEntropy', false
@@ -88,7 +87,6 @@ angular.module('passwordEntropy', [])
   
           ctrl.$parsers.unshift checkEntropy
           return
-  
       }
   ])
   ##############################################################################
@@ -96,27 +94,27 @@ angular.module('passwordEntropy', [])
 
   .factory 'EntropyService', ->
     # service state
-    H = 0
+    score = 0
     password = ''
 
     # pattern => [quality factor in {0..1}, regex]
     patternsList = 
        [ [ 0.25 ,/^\d+$/]                  # all digits
-       , [ 0.25 ,/^[a-z]+\d$/]             # all lower 1 digit
-       , [ 0.25 ,/^[A-Z]+\d$/]             # all upper 1 digit
-       , [ 0.5  ,/^[a-zA-Z]+\d$/]          # all letters 1 digit
-       , [ 0.5  ,/^[a-z]+\d+$/]            # all lower then digits
-       , [ 0.25 ,/^[a-z]+$/]               # all lower
-       , [ 0.25 ,/^[A-Z]+$/]               # all upper
-       , [ 0.25 ,/^[A-Z][a-z]+$/]          # 1 upper all lower
-       , [ 0.25 ,/^[A-Z][a-z]+\d$/]        # 1 upper, lower, 1 digit
-       , [ 0.5  ,/^[A-Z][a-z]+\d+$/]       # 1 upper, lower, digits
-       , [ 0.25 ,/^[a-z]+[._!\- @*#]$/]    # all lower 1 special
-       , [ 0.25 ,/^[A-Z]+[._!\- @*#]$/]    # all upper 1 special
-       , [ 0.5  ,/^[a-zA-Z]+[._!\- @*#]$/] # all letters 1 special
-       , [ 0.25 ,/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]+$/]  # email
-    # not clear, [ 0.5 ,/^[a-z\-ZA-Z0-9.-]+$/]    # web address
-       , [ 1   ,/^.*$/]    # anything
+         [ 0.25 ,/^[a-z]+\d$/]             # all lower 1 digit
+         [ 0.25 ,/^[A-Z]+\d$/]             # all upper 1 digit
+         [ 0.5  ,/^[a-zA-Z]+\d$/]          # all letters 1 digit
+         [ 0.5  ,/^[a-z]+\d+$/]            # all lower then digits
+         [ 0.25 ,/^[a-z]+$/]               # all lower
+         [ 0.25 ,/^[A-Z]+$/]               # all upper
+         [ 0.25 ,/^[A-Z][a-z]+$/]          # 1 upper all lower
+         [ 0.25 ,/^[A-Z][a-z]+\d$/]        # 1 upper, lower, 1 digit
+         [ 0.5  ,/^[A-Z][a-z]+\d+$/]       # 1 upper, lower, digits
+         [ 0.25 ,/^[a-z]+[._!\- @*#]$/]    # all lower 1 special
+         [ 0.25 ,/^[A-Z]+[._!\- @*#]$/]    # all upper 1 special
+         [ 0.5  ,/^[a-zA-Z]+[._!\- @*#]$/] # all letters 1 special
+         [ 0.25 ,/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]+$/]  # email
+    # not clear [ 0.5 ,/^[a-z\-ZA-Z0-9.-]+$/]    # web address
+         [ 1   ,/^.*$/]    # anything
        ]
     # helpers
     Math.log2 = (x) -> Math.log(x) / Math.LN2
@@ -159,9 +157,8 @@ angular.module('passwordEntropy', [])
     { scorePassword: (pass) -> 
                  if pass isnt password 
                     password = pass
-                    H = scorePasswordM(pass)
+                    score = scorePasswordM(pass)
                  else 
-                    H
+                    score
     }
   ##############################################################################
-
