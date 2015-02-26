@@ -68,3 +68,6 @@ bower update angular-password-entropy
     }])
 ```
 
+```
+coffee --compile --output . src/
+```

@@ -59,7 +59,7 @@
               }
               return message;
             };
-            $scope.entropy = EntropyService.entropeus;
+            $scope.entropy = EntropyService.scorePassword;
             return $scope.$watch('password', function(newValue, oldValue) {
               return $scope.H = $scope.entropy(newValue);
             });
@@ -80,7 +80,7 @@
           checkEntropy = function(viewValue) {
             var H, minimumEntropy;
             minimumEntropy = parseFloat(attrs.minEntropy);
-            H = EntropyService.entropeus(viewValue);
+            H = EntropyService.scorePassword(viewValue);
             if (H > minimumEntropy) {
               ctrl.$setValidity('minEntropy', true);
             } else {
@@ -93,9 +93,10 @@
       };
     }
   ]).factory('EntropyService', function() {
-    var H, base, entropy2, entropyWeighted, hasDigits, hasLowerCase, hasPunctuation, hasUpperCase, maybePassword, password, patternsList, quality, scorePassword;
+    var H, base, entropy, entropyWeighted, hasDigits, hasLowerCase, hasPunctuation, hasUpperCase, maybePassword, password, patternsList, quality, scorePasswordM;
     H = 0;
     password = '';
+    patternsList = [[0.25, /^\d+$/], [0.25, /^[a-z]+\d$/], [0.25, /^[A-Z]+\d$/], [0.5, /^[a-zA-Z]+\d$/], [0.5, /^[a-z]+\d+$/], [0.25, /^[a-z]+$/], [0.25, /^[A-Z]+$/], [0.25, /^[A-Z][a-z]+$/], [0.25, /^[A-Z][a-z]+\d$/], [0.5, /^[A-Z][a-z]+\d+$/], [0.25, /^[a-z]+[._!\- @*#]$/], [0.25, /^[A-Z]+[._!\- @*#]$/], [0.5, /^[a-zA-Z]+[._!\- @*#]$/], [0.25, /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]+$/], [1, /^.*$/]];
     Math.log2 = function(x) {
       return Math.log(x) / Math.LN2;
     };
@@ -141,12 +142,11 @@
         return Just(str);
       }
     };
-    entropy2 = function(str) {
+    entropy = function(str) {
       return maybePassword(str).bind(function(pw) {
         return Just(Math.log2(Math.pow(base(pw), pw.length)));
       });
     };
-    patternsList = [[0.25, /^\d+$/], [0.25, /^[a-z]+\d$/], [0.25, /^[A-Z]+\d$/], [0.5, /^[a-zA-Z]+\d$/], [0.5, /^[a-z]+\d+$/], [0.25, /^[a-z]+$/], [0.25, /^[A-Z]+$/], [0.25, /^[A-Z][a-z]+$/], [0.25, /^[A-Z][a-z]+\d$/], [0.5, /^[A-Z][a-z]+\d+$/], [0.25, /^[a-z]+[._!\- @*#]$/], [0.25, /^[A-Z]+[._!\- @*#]$/], [0.5, /^[a-zA-Z]+[._!\- @*#]$/], [0.25, /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]+$/], [1, /^.*$/]];
     quality = function(str, patterns) {
       var p;
       return Math.min.apply(this, (function() {
@@ -162,11 +162,11 @@
       })());
     };
     entropyWeighted = function(str, patterns) {
-      return (entropy2(str)).bind(function(e) {
+      return (entropy(str)).bind(function(e) {
         return Just(e * quality(str, patterns));
       });
     };
-    scorePassword = function(str) {
+    scorePasswordM = function(str) {
       var s;
       s = entropyWeighted(str, patternsList);
       switch (s) {
@@ -181,10 +181,10 @@
       }
     };
     return {
-      entropeus: function(pass) {
+      scorePassword: function(pass) {
         if (pass !== password) {
           password = pass;
-          return H = scorePassword(pass);
+          return H = scorePasswordM(pass);
         } else {
           return H;
         }
