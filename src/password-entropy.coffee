@@ -22,7 +22,7 @@ angular.module('passwordEntropy', [])
       controller: [
         '$scope'
         ($scope) ->
-          # state bar varibles          
+          # state bar varibles
           $scope.score = 0
           $scope.colorBar = 'progress-bar-danger'
 
