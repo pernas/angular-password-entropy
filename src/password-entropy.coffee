@@ -1,20 +1,5 @@
 'use strict'
 ################################################################################
-# Define Maybe monad
-_bind = (f) -> switch this
-  when Nothing then Nothing
-  else f this.val
-
-_unit = (input) ->
-  Object.freeze
-    val: input ? null
-    bind: _bind
-
-Nothing = _unit null
-
-Just = (input)-> if input? then _unit input else Nothing
-################################################################################
-
 angular.module('passwordEntropy', [])
   .directive('passwordEntropy', [
     'EntropyService'
@@ -37,17 +22,17 @@ angular.module('passwordEntropy', [])
       controller: [
         '$scope'
         ($scope) ->
-          # state bar varibles
+          # state bar varibles          
           $scope.score = 0
           $scope.colorBar = 'progress-bar-danger'
 
           # options setup
-          defaultOpt = {
+          defaultOpt = 
             '0':  ['progress-bar-danger', 'weak'],
             '25': ['progress-bar-warning', 'regular'],
             '50': ['progress-bar-info', 'normal'],
             '75': ['progress-bar-success', 'strong']
-          }
+          
           $scope.optionsUsed = $scope.options or defaultOpt
 
           # score veredict method
@@ -68,7 +53,6 @@ angular.module('passwordEntropy', [])
     }])
   ##############################################################################
   # validation rule
-
   .directive('minEntropy', [
     'EntropyService'
     (EntropyService) ->
@@ -90,12 +74,33 @@ angular.module('passwordEntropy', [])
       }
   ])
   ##############################################################################
-  # Entropy service
+  # Define Maybe monad
+  .factory 'Maybe', ->  
+    _bind = (f) -> switch this
+      when Nothing then Nothing
+      else f this.val
 
-  .factory 'EntropyService', ->
+    _unit = (input) ->
+      Object.freeze
+        val: input ? null
+        bind: _bind
+
+    Nothing = _unit null
+    Just = (input)-> if input? then _unit input else Nothing  
+    { 
+      Nothing: Nothing
+      Just: Just
+    }
+  ##############################################################################
+  # Entropy service
+  .factory 'EntropyService', ['Maybe', (Maybe) ->
     # service state
     score = 0
     password = ''
+
+    # maybe monad injection
+    Nothing = Maybe.Nothing
+    Just = Maybe.Just
 
     # pattern => [quality factor in {0..1}, regex]
     patternsList = 
@@ -161,4 +166,5 @@ angular.module('passwordEntropy', [])
                  else 
                     score
     }
+  ]
   ##############################################################################
