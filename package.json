@@ -1,0 +1,33 @@
+{
+  "name": "angular-password-entropy",
+  "version": "0.0.0",
+  "description": "dev dependencies for the bower package",
+  "main": "password-entropy.js",
+  "dependencies": {},
+  "devDependencies": {
+    "coffee-script": "^1.9.1", 
+    "grunt": "^0.4.5",
+    "grunt-contrib-coffee": "^0.13.0",
+    "grunt-contrib-watch": "^0.6.1"
+    },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pernas/angular-password-entropy.git"
+  },
+  "keywords": [
+    "angular",
+    "coffeescript",
+    "directive",
+    "password",
+    "entropy"
+  ],
+  "author": "Jaume Pernas <jaume@pernas.cat> (https://github.com/pernas)",
+  "license": "UNLICENSE",
+  "bugs": {
+    "url": "https://github.com/pernas/angular-password-entropy/issues"
+  },
+  "homepage": "https://github.com/pernas/angular-password-entropy"
+}
