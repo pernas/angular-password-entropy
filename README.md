@@ -67,3 +67,13 @@ bower update angular-password-entropy
         }; 
     }])
 ```
+
+
+## Development
+
+```
+git clone repo
+cd repo
+npm install
+grunt watch
+```
