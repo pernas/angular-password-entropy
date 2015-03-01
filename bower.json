@@ -6,7 +6,7 @@
     "Jaume Pernas <jaume@pernas.cat>"
   ],
   "description": "angularjs directive to create an entropy bar for a password",
-  "main": "password-entropy.js",
+  "main": "password-entropy.min.js",
   "keywords": [
     "angularjs",
     "password",

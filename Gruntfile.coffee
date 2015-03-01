@@ -10,15 +10,26 @@ module.exports = (grunt) ->
               'src/*.coffee'
 #             'otherdirectory/*.coffee'
             ]
+    uglify:
+      compileJoined:
+        options:
+          mangle: true
+        files:
+          'password-entropy.min.js':
+            [
+              'password-entropy.js'
+            ]      
     watch:
       files: 'src/*.coffee'
       tasks:
         [
           'coffee'
+          'ulgify'
 #         'other-task'
         ]
 
   grunt.loadNpmTasks 'grunt-contrib-coffee'
+  grunt.loadNpmTasks 'grunt-contrib-uglify'
   grunt.loadNpmTasks 'grunt-contrib-watch'
 
-  grunt.registerTask 'default', ['coffee']
+  grunt.registerTask 'default','Compile and minify coffeescript files', ['coffee', 'uglify']
