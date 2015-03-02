@@ -28,11 +28,10 @@ angular.module('passwordEntropy', [])
 
           # options setup
           defaultOpt = 
-            '0':  ['progress-bar-danger', 'weak'],
-            '25': ['progress-bar-warning', 'regular'],
-            '50': ['progress-bar-info', 'normal'],
-            '75': ['progress-bar-success', 'strong']
-          
+            '0':  ['progress-bar-danger', 'weak']
+            '25': ['progress-bar-warning', 'regular']
+            '50': ['progress-bar-info', 'normal']
+            '75': ['progress-bar-success', 'strong']   
           $scope.optionsUsed = $scope.options or defaultOpt
 
           # score veredict method
@@ -104,7 +103,7 @@ angular.module('passwordEntropy', [])
 
     # pattern => [quality factor in {0..1}, regex]
     patternsList = 
-       [ [ 0.25 ,/^\d+$/]                  # all digits
+        [[ 0.25 ,/^\d+$/]                  # all digits
          [ 0.25 ,/^[a-z]+\d$/]             # all lower 1 digit
          [ 0.25 ,/^[A-Z]+\d$/]             # all upper 1 digit
          [ 0.5  ,/^[a-zA-Z]+\d$/]          # all letters 1 digit
@@ -120,7 +119,7 @@ angular.module('passwordEntropy', [])
          [ 0.25 ,/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]+$/]  # email
     # not clear [ 0.5 ,/^[a-z\-ZA-Z0-9.-]+$/]    # web address
          [ 1   ,/^.*$/]    # anything
-       ]
+        ]
     # helpers
     Math.log2 = (x) -> Math.log(x) / Math.LN2
     hasDigits      = (str) -> /[0-9]/.test str
@@ -129,9 +128,9 @@ angular.module('passwordEntropy', [])
     hasPunctuation = (str) -> /[-!$%^&*()_+|~=`{}\[\]:";'<>?@,.\/]/.test str
     base = (str) -> 
         tuples = [[10, hasDigits(str)]
-                 ,[26, hasLowerCase(str)]
-                 ,[26, hasUpperCase(str)]
-                 ,[31, hasPunctuation(str)]]
+                  [26, hasLowerCase(str)]
+                  [26, hasUpperCase(str)]
+                  [31, hasPunctuation(str)]]
         bases = (t[0] for t in tuples when t[1])
         b = bases.reduce(((t, s) -> t + s),0)
         if b is 0 then 1 else b
