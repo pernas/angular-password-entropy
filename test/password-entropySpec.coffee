@@ -1,8 +1,7 @@
-describe 'Password-Entropy Directive Rendering', ->
+describe 'Password-Entropy Directive', ->
   
   beforeEach module('passwordEntropy')
   compile = undefined
-  mockBackend = undefined
   rootScope = undefined
 
   beforeEach module (($provide) ->
@@ -18,9 +17,8 @@ describe 'Password-Entropy Directive Rendering', ->
     return 
   ) 
 
-  beforeEach inject(($compile, $httpBackend, $rootScope) ->
+  beforeEach inject(($compile, $rootScope) ->
     compile = $compile
-    mockBackend = $httpBackend
     rootScope = $rootScope
     return
   )
@@ -76,7 +74,8 @@ describe 'Password-Entropy Directive Rendering', ->
     scope.$digest()
     compiledElementScope = element.isolateScope()
     expect(compiledElementScope.colorBar).toEqual("progress-bar-success")
-    expect(compiledElementScope.veredict(compiledElementScope.score)).toEqual("Strong password")
+    expect(compiledElementScope.veredict(compiledElementScope.score))
+      .toEqual("Strong password")
     
   it 'should recalculate the score when password is changed', ->
     {firstScore, secondScore} = {0, 0}
