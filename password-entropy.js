@@ -6,7 +6,7 @@
     'EntropyService', function(EntropyService) {
       return {
         restrict: 'E',
-        template: '<div ng-show="password" class="progress"> <div class="progress-bar" ng-class=colorBar role="progressbar" aria-valuenow="{{score}}"" aria-valuemin="0" aria-valuemax="100" ng-style="{width: score + \'%\'}" > {{veredict(score)}}</div></div>',
+        template: '<div ng-show="password" class="progress">\n  <div class="progress-bar"\n      ng-class=colorBar\n      role="progressbar"\n      aria-valuenow="{{score}}""\n      aria-valuemin="0"\n      aria-valuemax="100"\n      ng-style="{width: score + \'%\'}">\n    {{veredict(score)}}\n  </div>\n</div>',
         controller: [
           '$scope', function($scope) {
             var defaultOpt;

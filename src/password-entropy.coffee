@@ -6,19 +6,20 @@ angular.module('passwordEntropy', [])
     (EntropyService) ->
       {
       restrict: 'E'
-      ############################
-      template: '<div ng-show="password" class="progress"> \
-                   <div class="progress-bar" \
-                        ng-class=colorBar \
-                        role="progressbar" \
-                        aria-valuenow="{{score}}"" \
-                        aria-valuemin="0" \
-                        aria-valuemax="100" \
-                        ng-style="{width: score + \'%\'}" > \
-                     {{veredict(score)}}\
-                   </div>\
-                  </div>'
-      ############################
+      template: '''
+        <div ng-show="password" class="progress">
+          <div class="progress-bar"
+              ng-class=colorBar
+              role="progressbar"
+              aria-valuenow="{{score}}""
+              aria-valuemin="0"
+              aria-valuemax="100"
+              ng-style="{width: score + \'%\'}">
+            {{veredict(score)}}
+          </div>
+        </div>
+        '''
+
       controller: [
         '$scope'
         ($scope) ->
@@ -44,7 +45,7 @@ angular.module('passwordEntropy', [])
           $scope.entropy = EntropyService.scorePassword
           $scope.$watch('password', (nV, oV) -> $scope.score = $scope.entropy nV)
       ]
-      ############################
+
       scope:
           password: '='
           options: '='

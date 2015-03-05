@@ -24,7 +24,7 @@ module.exports = (grunt) ->
       tasks:
         [
           'coffee'
-          'ulgify'
+          'uglify'
 #         'other-task'
         ]
 
