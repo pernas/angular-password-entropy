@@ -5,10 +5,24 @@ describe 'Password-Entropy Directive Rendering', ->
   mockBackend = undefined
   rootScope = undefined
 
+  beforeEach module (($provide) ->
+    mockEntropyService = {scorePassword: (pass) -> 
+      switch pass
+        when "bad password" then 0
+        when "password 1" then 15
+        when "password 2" then 20
+        when "good password" then 100
+        else 0  
+    }
+    $provide.value 'EntropyService', mockEntropyService
+    return 
+  ) 
+
   beforeEach inject(($compile, $httpBackend, $rootScope) ->
-      compile = $compile
-      mockBackend = $httpBackend
-      rootScope = $rootScope
+    compile = $compile
+    mockBackend = $httpBackend
+    rootScope = $rootScope
+    return
   )
   
   it 'should render HTML correctly', ->
@@ -34,8 +48,7 @@ describe 'Password-Entropy Directive Rendering', ->
 
   it 'should score this password with 100', ->
     scope = rootScope.$new()
-    scope.pwd = '''capable vague ancient frequent gossip mixture 
-                   door common diamond catch ticket slot'''
+    scope.pwd = "good password"
     directive = '''<password-entropy password="pwd"></password-entropy>'''   
     element = compile(directive)(scope)
     scope.$digest()
@@ -44,7 +57,7 @@ describe 'Password-Entropy Directive Rendering', ->
 
   it 'should score this password under 20', ->
     scope = rootScope.$new()
-    scope.pwd = '''helloworld'''
+    scope.pwd = "bad password"
     directive = '''<password-entropy password="pwd"></password-entropy>'''   
     element = compile(directive)(scope)
     scope.$digest()
@@ -53,9 +66,10 @@ describe 'Password-Entropy Directive Rendering', ->
 
   it 'should label this password with the given option', ->
     scope = rootScope.$new()
-    scope.pwd = '''helloworld'''
+    scope.pwd = "good password"
     scope.opt = 
-      '0': ['progress-bar-success', 'Strong password']  
+      '0': ['progress-bar-danger',  'Weak password']  
+      '75': ['progress-bar-success', 'Strong password']  
     directive = '''<password-entropy password="pwd" options="opt">
                    </password-entropy>'''
     element = compile(directive)(scope)
@@ -63,3 +77,17 @@ describe 'Password-Entropy Directive Rendering', ->
     compiledElementScope = element.isolateScope()
     expect(compiledElementScope.colorBar).toEqual("progress-bar-success")
     expect(compiledElementScope.veredict(compiledElementScope.score)).toEqual("Strong password")
+    
+  it 'should recalculate the score when password is changed', ->
+    {firstScore, secondScore} = {0, 0}
+    scope = rootScope.$new()
+    scope.pwd = "password 1"
+    directive = '<password-entropy password="pwd"></password-entropy>'
+    element = compile(directive)(scope)
+    scope.$digest()
+    compiledElementScope = element.isolateScope()
+    firstScore = compiledElementScope.score
+    scope.pwd = "password 2"
+    scope.$digest()
+    secondScore = compiledElementScope.score
+    expect(firstScore).not.toEqual(secondScore)

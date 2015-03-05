@@ -7,8 +7,7 @@ module.exports = (grunt) ->
         files:
           'password-entropy.js':
             [
-              'src/*.coffee'
-#             'otherdirectory/*.coffee'
+              'src/password-entropy.coffee'
             ]
     uglify:
       compileJoined:
@@ -20,7 +19,7 @@ module.exports = (grunt) ->
               'password-entropy.js'
             ]      
     watch:
-      files: 'src/*.coffee'
+      files: 'src/password-entropy.coffee'
       tasks:
         [
           'coffee'
