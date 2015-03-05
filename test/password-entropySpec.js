@@ -1,5 +1,5 @@
 // File: chapter12/stockDirectiveRenderSpec.js
-describe('Password-Entropy Directive Behavior', function() {
+describe('Password-Entropy Directive Rendering', function() {
 
   beforeEach(module('passwordEntropy'));
 
@@ -16,7 +16,7 @@ describe('Password-Entropy Directive Behavior', function() {
     // Step 2
     var scope = rootScope.$new();
    
-      scope.pwd = "badpassword badpassword 33 badpassword B badpassword";
+      scope.pwd = "badpassword";
       // scope.testSubmit = function() {alert("Hola!!");};
       scope.myOpt = {
                    '0': ['progress-bar-danger',  'very weak'],
@@ -42,6 +42,6 @@ describe('Password-Entropy Directive Behavior', function() {
 
     // Step 6
     expect(element.html()).toContain(
-      'progress-bar-success');
+      'progress-bar-danger');
   });
 });
