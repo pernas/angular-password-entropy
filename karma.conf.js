@@ -15,10 +15,11 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
-      'angular.min.js',
-      'angular-mocks.js',
+      'node_modules/angular/angular.min.js',
+      'node_modules/angular-mocks/angular-mocks.js',
       'password-entropy.min.js',
-      'password-entropySpec.js'
+      'test/password-entropyRenderSpec.js',
+      'test/password-entropyBehaviorSpec.js'
     ],
 
 

@@ -77,3 +77,9 @@ cd repo
 npm install
 grunt watch
 ```
+
+## Test
+
+```
+karma start
+```
