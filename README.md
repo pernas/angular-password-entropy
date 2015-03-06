@@ -80,6 +80,14 @@ grunt watch
 
 ## Test
 
+You may need to install PhantomJS. On Mac Os X:
+
 ```
+brew install phantomjs
+```
+
+To run test and monitor for changes
+```
+npm install
 karma start
 ```
