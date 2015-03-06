@@ -13,9 +13,10 @@ module.exports = (config) ->
     frameworks: ['jasmine']
 
     plugins : [
-      'karma-chrome-launcher'
+      # 'karma-chrome-launcher'
       'karma-jasmine'
-      'karma-coffee-preprocessor'   
+      'karma-coffee-preprocessor'
+      'karma-phantomjs-launcher'   
     ]
 
     # list of files / patterns to load in the browser
@@ -30,7 +31,6 @@ module.exports = (config) ->
     # list of files to exclude
     exclude: [
     ]
-
 
     # preprocess matching files before serving them to the browser
     # available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
@@ -78,7 +78,10 @@ module.exports = (config) ->
 
     # start these browsers
     # available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['Chrome']
+    browsers: [
+      'PhantomJS'
+      # 'Chrome'
+    ]
 
 
     # Continuous Integration mode
