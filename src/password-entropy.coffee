@@ -104,19 +104,19 @@ angular.module('passwordEntropy', [])
 
     # pattern => [quality factor in {0..1}, regex]
     patternsList = 
-        [[ 0.25 ,/^\d+$/]                  # all digits
-         [ 0.25 ,/^[a-z]+\d$/]             # all lower 1 digit
-         [ 0.25 ,/^[A-Z]+\d$/]             # all upper 1 digit
-         [ 0.5  ,/^[a-zA-Z]+\d$/]          # all letters 1 digit
-         [ 0.5  ,/^[a-z]+\d+$/]            # all lower then digits
-         [ 0.25 ,/^[a-z]+$/]               # all lower
-         [ 0.25 ,/^[A-Z]+$/]               # all upper
-         [ 0.25 ,/^[A-Z][a-z]+$/]          # 1 upper all lower
-         [ 0.25 ,/^[A-Z][a-z]+\d$/]        # 1 upper, lower, 1 digit
-         [ 0.5  ,/^[A-Z][a-z]+\d+$/]       # 1 upper, lower, digits
-         [ 0.25 ,/^[a-z]+[._!\- @*#]$/]    # all lower 1 special
-         [ 0.25 ,/^[A-Z]+[._!\- @*#]$/]    # all upper 1 special
-         [ 0.5  ,/^[a-zA-Z]+[._!\- @*#]$/] # all letters 1 special
+        [[ 0.25 ,/^[\d\s]+$/]                # all digits
+         [ 0.25 ,/^[a-z\s]+\d$/]             # all lower 1 digit
+         [ 0.25 ,/^[A-Z\s]+\d$/]             # all upper 1 digit
+         [ 0.5  ,/^[a-zA-Z\s]+\d$/]          # all letters 1 digit
+         [ 0.5  ,/^[a-z\s]+\d+$/]            # all lower then digits
+         [ 0.25 ,/^[a-z\s]+$/]               # all lower
+         [ 0.25 ,/^[A-Z\s]+$/]               # all upper
+         [ 0.25 ,/^[A-Z][a-z\s]+$/]          # 1 upper all lower
+         [ 0.25 ,/^[A-Z][a-z\s]+\d$/]        # 1 upper, lower, 1 digit
+         [ 0.5  ,/^[A-Z][a-z\s]+\d+$/]       # 1 upper, lower, digits
+         [ 0.25 ,/^[a-z\s]+[._!\- @*#]$/]    # all lower 1 special
+         [ 0.25 ,/^[A-Z\s]+[._!\- @*#]$/]    # all upper 1 special
+         [ 0.5  ,/^[a-zA-Z\s]+[._!\- @*#]$/] # all letters 1 special
          [ 0.25 ,/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]+$/]  # email
     # not clear [ 0.5 ,/^[a-z\-ZA-Z0-9.-]+$/]    # web address
          [ 1   ,/^.*$/]    # anything
