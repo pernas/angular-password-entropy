@@ -27,7 +27,6 @@ module.exports = (config) ->
       'test/**/*Spec.coffee'
     ]
 
-
     # list of files to exclude
     exclude: [
     ]
