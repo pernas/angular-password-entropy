@@ -28,11 +28,11 @@ angular.module('passwordEntropy', [])
           $scope.colorBar = 'progress-bar-danger'
 
           # options setup
-          defaultOpt = 
+          defaultOpt =
             '0':  ['progress-bar-danger', 'weak']
             '25': ['progress-bar-warning', 'regular']
             '50': ['progress-bar-info', 'normal']
-            '75': ['progress-bar-success', 'strong']   
+            '75': ['progress-bar-success', 'strong']
           $scope.optionsUsed = $scope.options or defaultOpt
 
           # score veredict method
@@ -49,7 +49,7 @@ angular.module('passwordEntropy', [])
       scope:
           password: '='
           options: '='
-      
+
     }])
   ##############################################################################
   # validation rule
@@ -59,7 +59,7 @@ angular.module('passwordEntropy', [])
       {
         require: 'ngModel'
         link: (scope, elem, attrs, ctrl) ->
-  
+
           checkEntropy = (viewValue) ->
             minimumEntropy = parseFloat(attrs.minEntropy)
             score = EntropyService.scorePassword(viewValue)
@@ -68,14 +68,14 @@ angular.module('passwordEntropy', [])
             else
               ctrl.$setValidity 'minEntropy', false
             viewValue
-  
+
           ctrl.$parsers.unshift checkEntropy
           return
       }
   ])
   ##############################################################################
   # Define Maybe monad
-  .factory 'Maybe', ->  
+  .factory 'Maybe', ->
     _bind = (f) -> switch this
       when Nothing then Nothing
       else f this.val
@@ -86,8 +86,8 @@ angular.module('passwordEntropy', [])
         bind: _bind
 
     Nothing = _unit null
-    Just = (input)-> if input? then _unit input else Nothing  
-    { 
+    Just = (input)-> if input? then _unit input else Nothing
+    {
       Nothing: Nothing
       Just: Just
     }
@@ -103,7 +103,7 @@ angular.module('passwordEntropy', [])
     Just = Maybe.Just
 
     # pattern => [quality factor in {0..1}, regex]
-    patternsList = 
+    patternsList =
         [[ 0.25 ,/^[\d\s]+$/]                # all digits
          [ 0.25 ,/^[a-z\s]+\d$/]             # all lower 1 digit
          [ 0.25 ,/^[A-Z\s]+\d$/]             # all upper 1 digit
@@ -126,44 +126,47 @@ angular.module('passwordEntropy', [])
     hasDigits      = (str) -> /[0-9]/.test str
     hasLowerCase   = (str) -> /[a-z]/.test str
     hasUpperCase   = (str) -> /[A-Z]/.test str
-    hasPunctuation = (str) -> /[-!$%^&*()_+|~=`{}\[\]:";'<>?@,.\/]/.test str
-    base = (str) -> 
+    hasSymbol      = (str) -> /[^0-9a-zA-z]/.test str
+    # hasPunctuation = (str) -> /[-!$%^&*()_+|~=`{}\[\]:";'<>?@,.\/]/.test str
+    computeSet = (str) ->
+      maxChar = Math.max.apply(Math, str.split('').map((c) -> c.charCodeAt 0))
+      return maxChar + 256 - (maxChar % 256)
+    base = (str) ->
         tuples = [[10, hasDigits(str)]
                   [26, hasLowerCase(str)]
-                  [26, hasUpperCase(str)]
-                  [31, hasPunctuation(str)]]
+                  [26, hasUpperCase(str)]]
         bases = (t[0] for t in tuples when t[1])
-        b = bases.reduce(((t, s) -> t + s),0)
+        b = if hasSymbol(str) then computeSet(str) else bases.reduce(((t, s) -> t + s),0)
         if b is 0 then 1 else b
 
-    maybePassword = (str) -> 
-        if str is "" or !str? or (typeof str) isnt 'string' 
-        then Nothing 
+    maybePassword = (str) ->
+        if str is "" or !str? or (typeof str) isnt 'string'
+        then Nothing
         else Just str
 
-    entropy = (str) -> 
-        maybePassword(str).bind (pw)-> 
+    entropy = (str) ->
+        maybePassword(str).bind (pw)->
           Just Math.log2 Math.pow(base(pw),pw.length)
 
-    quality = (str, patterns) ->  
+    quality = (str, patterns) ->
         Math.min.apply @, (p[0] for p in patterns when p[1].test str)
 
-    entropyWeighted = (str, patterns) -> 
-        (entropy str).bind (e) -> 
-          Just (e*quality(str, patterns)) 
+    entropyWeighted = (str, patterns) ->
+        (entropy str).bind (e) ->
+          Just (e*quality(str, patterns))
 
     scorePasswordM = (str) ->
         s = entropyWeighted str, patternsList
         switch s
             when Nothing then 0
-            else (if s.val > 100 then 100 else s.val) 
+            else (if s.val > 100 then 100 else s.val)
 
     # public method
-    { scorePassword: (pass) -> 
-                 if pass isnt password 
+    { scorePassword: (pass) ->
+                 if pass isnt password
                     password = pass
                     score = scorePasswordM(pass)
-                 else 
+                 else
                     score
     }
   ]

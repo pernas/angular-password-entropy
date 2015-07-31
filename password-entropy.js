@@ -95,7 +95,7 @@
     };
   }).factory('EntropyService', [
     'Maybe', function(Maybe) {
-      var Just, Nothing, base, entropy, entropyWeighted, hasDigits, hasLowerCase, hasPunctuation, hasUpperCase, maybePassword, password, patternsList, quality, score, scorePasswordM;
+      var Just, Nothing, base, computeSet, entropy, entropyWeighted, hasDigits, hasLowerCase, hasSymbol, hasUpperCase, maybePassword, password, patternsList, quality, score, scorePasswordM;
       score = 0;
       password = '';
       Nothing = Maybe.Nothing;
@@ -113,12 +113,19 @@
       hasUpperCase = function(str) {
         return /[A-Z]/.test(str);
       };
-      hasPunctuation = function(str) {
-        return /[-!$%^&*()_+|~=`{}\[\]:";'<>?@,.\/]/.test(str);
+      hasSymbol = function(str) {
+        return /[^0-9a-zA-z]/.test(str);
+      };
+      computeSet = function(str) {
+        var maxChar;
+        maxChar = Math.max.apply(Math, str.split('').map(function(c) {
+          return c.charCodeAt(0);
+        }));
+        return maxChar + 256 - (maxChar % 256);
       };
       base = function(str) {
         var b, bases, t, tuples;
-        tuples = [[10, hasDigits(str)], [26, hasLowerCase(str)], [26, hasUpperCase(str)], [31, hasPunctuation(str)]];
+        tuples = [[10, hasDigits(str)], [26, hasLowerCase(str)], [26, hasUpperCase(str)]];
         bases = (function() {
           var i, len, results;
           results = [];
@@ -130,7 +137,7 @@
           }
           return results;
         })();
-        b = bases.reduce((function(t, s) {
+        b = hasSymbol(str) ? computeSet(str) : bases.reduce((function(t, s) {
           return t + s;
         }), 0);
         if (b === 0) {
